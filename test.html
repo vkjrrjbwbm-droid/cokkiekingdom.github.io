@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head><title>Test Webhook</title></head>
+<body>
+    <button onclick="test()">Test Webhook</button>
+    <p id="result"></p>
+    <script>
+    async function test() {
+        const url = "https://discord.com/api/webhooks/1509591832374411284/yXP2A806X0U1l912lxRWXHRDKAxPgwl2iHT7CTtxw_a2Cr6KZlwwGOL8iXuy1ufPF36B";
+        document.getElementById('result').innerHTML = 'Sending...';
+        
+        try {
+            const r = await fetch(url, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({content: 'Test message from GitHub Pages!'})
+            });
+            document.getElementById('result').innerHTML = 'Status: ' + r.status + ' ' + (r.ok ? 'OK ✅' : 'Error ❌');
+        } catch(e) {
+            document.getElementById('result').innerHTML = 'Error: ' + e.message;
+        }
+    }
+    </script>
+</body>
+</html>
